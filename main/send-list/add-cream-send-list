@@ -1,0 +1,91 @@
+//クリーム発送伝票作成
+function AddCreamSendList(){
+  //シート取得
+  var originalSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Cream');
+  var sendListSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('クリーム発送待ち');
+  var addSheet =　SpreadsheetApp.openById("発送伝票ID").getSheetByName('クリーム発送伝票');//発送伝票のIDを記載
+
+  var rowNumber;
+  var kosuu;
+  var receipt;
+  var post;
+  var postNumber;
+  var tel;
+  var name;
+
+  // 今日の日付を取得
+  var today = new Date();
+  //Logger.log(Utilities.formatDate( today, 'Asia/Tokyo', 'yyyy/M/d'));
+
+  //最終行取得
+  var addSheetLastRow = addSheet.getDataRange().getLastRow();
+  var addSheetLastColumn = addSheet.getDataRange().getLastColumn();
+  //発送伝票シートデータ削除
+  addSheet.getRange(2,1,addSheetLastRow,addSheetLastColumn).clearContent();
+
+  //最終行取得
+  var sendListLastRow = sendListSheet.getDataRange().getLastRow();
+  //Logger.log(sendListLastRow)
+
+  //C列取得
+  var checkList = sendListSheet.getRange(3,11,sendListLastRow).getValues();
+  checkList = checkList.flat();
+  //Logger.log(checkList)
+
+
+  for (var i = 0; i < sendListLastRow; i++){
+    if(checkList[i] === "✓"){
+
+      //Logger.log(i+3)
+　    //originalシートの行番号取得
+      rowNumber = sendListSheet.getRange(i+3,6).getValue()
+      Logger.log(rowNumber)
+      
+      //発送伝票シート最終行取得
+      addSheetLastRow = addSheet.getDataRange().getLastRow();
+      //Logger.log(addSheetLastRow)
+      
+      //↓固定追加事項
+      //発送伝票シートに追記([✓探索])
+      addSheet.getRange(addSheetLastRow+1,2).setValue("5")
+      //日付
+      addSheet.getRange(addSheetLastRow+1,5).setValue(today)
+      //ご依頼主電話番号
+      addSheet.getRange(addSheetLastRow+1,20).setValue("070-4111-1494")
+      //ご依頼主郵便番号
+      addSheet.getRange(addSheetLastRow+1,22).setValue("165-0032")
+      //ご依頼主住所
+      addSheet.getRange(addSheetLastRow+1,23).setValue("東京都中野区鷺宮4-31-2")
+      //ご依頼主氏名
+      addSheet.getRange(addSheetLastRow+1,25).setValue("合同会社OAT LABO")
+      
+      //↓お客様によって変わる項目
+      //品名2
+      kosuu = sendListSheet.getRange(i+3,8).getValue()
+      
+      addSheet.getRange(addSheetLastRow+1,29).setValue(kosuu)
+      //品名1
+      addSheet.getRange(addSheetLastRow+1,28).setValue("クリーム×"+kosuu)
+      //領収書有りなら
+      receipt = sendListSheet.getRange(i+3,9).getValue()
+      if(receipt === "有り"){
+        addSheet.getRange(addSheetLastRow+1,33).setValue("領収書")
+      }
+      //お届け先電話番号
+      tel = originalSheet.getRange(rowNumber,8).getValue()
+      addSheet.getRange(addSheetLastRow+1,9).setValue(tel)
+      //お届け先郵便番号
+      postNumber = originalSheet.getRange(rowNumber,12).getValue()
+      addSheet.getRange(addSheetLastRow+1,11).setValue(postNumber)
+      //お届け先住所
+      post = originalSheet.getRange(rowNumber,13).getValue()
+      addSheet.getRange(addSheetLastRow+1,12).setValue(post)
+      //お届け先名
+      name = originalSheet.getRange(rowNumber,7).getValue()
+      Logger.log(name)
+      addSheet.getRange(addSheetLastRow+1,16).setValue(name)
+      //行番号
+      addSheet.getRange(addSheetLastRow+1,34).setValue(rowNumber)
+    }
+  }
+}
