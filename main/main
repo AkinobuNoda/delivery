@@ -135,3 +135,4 @@ function StockToLine(key) {
 function StatusToSlack(key) {
    return NotifycationScript.StatusToSlack(key);
 }
+
