@@ -1,0 +1,137 @@
+//開いたシートの最後の行へ移動
+function onOpen() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    SpreadsheetApp.getActiveSheet().setActiveSelection("A" + sheet.getLastRow()); 
+}
+
+
+//発送待ちシートのボタン作成
+function CreamWaitBtn(){
+  CreamWait();
+  Browser.msgBox("発送待ちシートを作成しました。");
+}
+function YodoWaitBtn(){
+  YodoWait();
+  Browser.msgBox("発送待ちシートを作成しました。");
+}
+
+
+//発送伝票シートの作成
+function AddCreamSendListBtn(){
+  AddCreamSendList();
+}
+function AddCreamSendList(key){
+  SendAddressSheet.AddCreamSendList(key);
+}
+function AddYodoSendListBtn(){
+  AddYodoSendList();
+}
+function AddYodoSendList(key){
+  SendAddressSheet.AddYodoSendList(key);
+}
+function AddAllSendList(key){
+  SendAddressSheet.AddAllSendList(key);
+}
+
+
+//メール送信待ちにすると問い合わせ番号入力窓がポップアップ
+function onEdit() {
+    var ss = SpreadsheetApp.getActiveSheet();
+    var cell = ss.getActiveCell();
+
+    var row = cell.getRow();
+    if (cell.getValue() == "メール送信待ち") {
+    //名前を取得
+    var  name = ss.getRange(row,7).getValue();
+    //「名前+～を入力してください」を表示
+    var number =  Browser.inputBox(name +" 様の問い合わせ番号を入力してください");
+    ss.getRange(row,4).setValue(number);
+    }
+}
+
+
+//キャンセルにすると個数が0になり、その行の背景色が灰色になる
+function CancelOnEdit(){
+  //編集中のシート取得
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var cell = sheet.getActiveCell();
+  var cellValue = cell.getValue()
+
+  Logger.log(sheet.getName())
+  Logger.log(cellValue)
+  //シート名がCream,Yodoだったら
+  if(sheet.getName() === "Cream" || sheet.getName() === "Yodo"){
+    if (cellValue === "キャンセル") {
+      var row = cell.getRow();
+      Logger.log("Row"+row)
+      sheet.getRange(row,10).setValue("0")
+      sheet.getRange(row,11).setValue("0")
+      sheet.getRange(row,1,1,26).setBackground('#d0d0d0');
+    }
+  }
+}
+
+
+//発送完了メール送信ボタン
+function SendCreamMail(){
+  var msg = Browser.msgBox("発送完了メールを送信しますか？", Browser.Buttons.YES_NO);
+  if(msg=="yes"){
+    Browser.msgBox('メールを送信します。');
+    SendOrderCreamMail();
+  }
+  else{
+    Browser.msgBox('キャンセルしました。');
+  }
+
+}
+
+function SendYodoMail(){
+  var msg = Browser.msgBox("発送完了メールを送信しますか？", Browser.Buttons.YES_NO);
+  if(msg=="yes"){
+    Browser.msgBox('メールを送信します。');
+    SendOrderYodoMail();
+  }
+  else{
+    Browser.msgBox('キャンセルしました。');
+  }
+}
+
+
+//Gmailからスプレッドシートへ
+function CreamMailToSpreadsheet(key) {
+   return ToSpreadsheet.CreamMailToSpreadsheet(key);
+}
+function YodoMailToSpreadsheet(key) {
+   return ToSpreadsheet.YodoMailToSpreadsheet(key);
+}
+
+
+//サロン会員様検索
+function SearchNameofCream(key) {
+   return Search.SearchNameofCream(key);
+}
+
+function SearchNameofYodo(key) {
+   return Search.SearchNameofYodo(key);
+}
+
+
+//発送完了メール送信
+function SendOrderCreamMail(key) {
+   return SendMail.SendOrderCreamMail(key);
+}
+function SendOrderYodoMail(key) {
+   return SendMail.SendOrderYodoMail(key);
+}
+
+
+//LINEへ在庫数通知
+function StockToLine(key) {
+   return NotifycationScript.StockToLine(key);
+}
+
+
+//Slackへ発送待ち個数通知
+function StatusToSlack(key) {
+   return NotifycationScript.StatusToSlack(key);
+}
