@@ -125,14 +125,53 @@ function SendOrderYodoMail(key) {
 }
 
 
-//LINEへ在庫数通知
+//LINEへ在庫数を通知
 function StockToLine(key) {
    return NotifycationScript.StockToLine(key);
 }
 
 
-//Slackへ発送待ち個数通知
+//Slackへ発送待ち個数を通知
 function StatusToSlack(key) {
    return NotifycationScript.StatusToSlack(key);
 }
 
+
+//今日の売上集計を作成
+function GetContentsSummary(key){
+  return Summary.GetContentsSummary(key);
+}
+
+
+//Slackへ集計をPDFにして送信
+function SummaryToSlack(key) {
+   return Summary.GetTodayPdf(key);
+}
+
+
+//クリームリマインドメールを送信
+function SendRemaindCreamMail(key) {
+   return Remind.SendRemindCreamMail(key);
+}
+
+
+//ヨードリマインドメールを送信
+function SendRemindYodoMail(key){
+  return Remind.SendRemindYodoMail(key);
+}
+
+
+//リマインドから5日返信がないお客様をキャンセルに変更
+function RemindToCancel(key){
+  return Remind.RemindToCancel(key);
+}
+
+
+//発送待ちリストの作成
+function CreamWait(key){
+  return WaitList.CreamWait(key);
+}
+
+function YodoWait(key){
+  return WaitList.YodoWait(key);
+}
